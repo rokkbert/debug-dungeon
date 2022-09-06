@@ -33,5 +33,8 @@ jobs:
       - run: ./grant_permissions.sh
       - name: Check pods
         run: kubectl get pod -n konveyor-forklift
-      - name: Call Forklift
-        run: kubectl get -n konveyor-forklift providers
+      - run: ./wait_for_forklift_startup.sh
+      - run: echo "CLUSTER=`kind get kubeconfig | grep server | cut -d ' ' -f6`" >> $GITHUB_ENV
+      - run: echo "TOKEN=`kubectl get secrets -n kube-system -o jsonpath='{.items[0].data.token-id}' | base64 -d`.`kubectl get secrets -n kube-system -o jsonpath='{.items[0].data.token-secret}' | base64 -d`" >> $GITHUB_ENV 
+      - name: Test-Call to Forklift
+        run: curl -k "$CLUSTER/apis/forklift.konveyor.io/v1beta1/namespaces/konveyor-forklift/providers" --header "Authorization: Bearer $TOKEN"
