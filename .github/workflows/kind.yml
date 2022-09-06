@@ -25,7 +25,7 @@ jobs:
         env:
           KUBECONFIG: kube-config
           KUBE_CONFIG: kube-config
-      - run: kube-config
+      - run: cat kube-config
       - run: echo "Get kubectl:"
       - uses: actions-hub/kubectl@master
         env:
