@@ -21,20 +21,22 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-      - run: ./install_kind.sh
+      - run: echo $PATH
+      - run: echo `pwd` >> $GITHUB_PATH
+      - run: echo $PATH
+      - run: install_kind.sh
       - run: echo "Get kubectl:"
       - run: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
       - run: chmod u+x kubectl
-      - run: echo $PATH
-      - run: echo `pwd` >> $GITHUB_PATH
       - run: kubectl version
-      - run: ./k8s-deploy-forklift.sh
-      - run: ./k8s-deploy-kubevirt.sh
-      - run: ./grant_permissions.sh
+      - run: k8s-deploy-forklift.sh
+      - run: k8s-deploy-kubevirt.sh
+      - run: grant_permissions.sh
       - name: Check pods
         run: kubectl get pod -n konveyor-forklift
-      - run: ./wait_for_forklift_startup.sh
+      - run: wait_for_forklift_startup.sh
       - run: echo "CLUSTER=`kind get kubeconfig | grep server | cut -d ' ' -f6`" >> $GITHUB_ENV
       - run: echo "TOKEN=`kubectl get secrets -n kube-system -o jsonpath='{.items[0].data.token-id}' | base64 -d`.`kubectl get secrets -n kube-system -o jsonpath='{.items[0].data.token-secret}' | base64 -d`" >> $GITHUB_ENV 
-      - name: Test-Call to Forklift
-        run: curl -k "$CLUSTER/apis/forklift.konveyor.io/v1beta1/namespaces/konveyor-forklift/providers" --header "Authorization: Bearer $TOKEN"
+      - name: Test call to Forklift
+        run: |
+          curl -k "$CLUSTER/apis/forklift.konveyor.io/v1beta1/namespaces/konveyor-forklift/providers" --header "Authorization: Bearer $TOKEN"
