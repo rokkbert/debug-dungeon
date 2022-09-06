@@ -32,8 +32,6 @@ jobs:
       - run: k8s-deploy-forklift.sh
       - run: k8s-deploy-kubevirt.sh
       - run: grant_permissions.sh
-      - name: Check pods
-        run: kubectl get pod -n konveyor-forklift
       - run: wait_for_forklift_startup.sh
       - run: echo "CLUSTER=`kind get kubeconfig | grep server | cut -d ' ' -f6`" >> $GITHUB_ENV
       - run: echo "TOKEN=`kubectl get secrets -n kube-system -o jsonpath='{.items[0].data.token-id}' | base64 -d`.`kubectl get secrets -n kube-system -o jsonpath='{.items[0].data.token-secret}' | base64 -d`" >> $GITHUB_ENV 
