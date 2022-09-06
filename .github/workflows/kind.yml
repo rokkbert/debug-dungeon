@@ -26,9 +26,12 @@ jobs:
           KUBECONFIG: kube-config
           KUBE_CONFIG: kube-config
       - run: cat kube-config
+      - run: echo "KUBE_CONFIG=`cat $KUBECONFIG | base64`" >> $GITHUB_ENV
+      - run: cat $GITHUB_ENV
       - run: echo "Get kubectl:"
-      - uses: azure/setup-kubectl@v3
-        id: install
+      - uses: actions-hub/kubectl@master
+        with:
+          args: get pods
       - run: kubectl version
       - run: ./k8s-deploy-forklift.sh
       - run: ./k8s-deploy-kubevirt.sh
