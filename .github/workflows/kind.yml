@@ -26,7 +26,7 @@ jobs:
           KUBECONFIG: kube-config
           KUBE_CONFIG: kube-config
       - run: cat kube-config
-      - run: echo "KUBE_CONFIG=`cat $KUBECONFIG | base64`" >> $GITHUB_ENV
+      - run: echo "KUBE_CONFIG=`cat kube-config | base64`" >> $GITHUB_ENV
       - run: cat $GITHUB_ENV
       - run: echo "Get kubectl:"
       - uses: actions-hub/kubectl@master
