@@ -14,7 +14,7 @@ jobs:
       - name: Check out forkliftci repository
         uses: actions/checkout@v3
         with:
-            repository: rokkbert/forkliftci
+          repository: rokkbert/forkliftci
       - run: echo "💡 The repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
       - name: List files in the repository
@@ -22,13 +22,17 @@ jobs:
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - run: ./install_kind.sh
-      - run: cat /github/home/.kube/config
+        env:
+          KUBECONFIG: kube-config
+          KUBE_CONFIG: kube-config
+      - run: kube-config
       - run: echo "Get kubectl:"
       - uses: actions-hub/kubectl@master
         env:
-          KUBE_CONFIG: ${HOME}/.kube/config
+          KUBECONFIG: kube-config
+          KUBE_CONFIG: kube-config
         with:
-            args: get pods
+          args: get pods
       - run: ./k8s-deploy-forklift.sh
       - run: ./k8s-deploy-kubevirt.sh
       - run: ./grant_permissions.sh
