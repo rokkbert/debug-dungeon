@@ -22,16 +22,11 @@ jobs:
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - run: ./install_kind.sh
-        env:
-          KUBECONFIG: kube-config
-          KUBE_CONFIG: kube-config
-      - run: cat kube-config
-      - run: echo "KUBE_CONFIG=`cat kube-config | base64`" >> $GITHUB_ENV
-      - run: cat $GITHUB_ENV
       - run: echo "Get kubectl:"
-      - uses: actions-hub/kubectl@master
-        with:
-          args: get pods
+      - run: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - run: chmod u+x kubectl
+      - run: echo $PATH
+      - run: echo `pwd` >> $GITHUB_PATH
       - run: kubectl version
       - run: ./k8s-deploy-forklift.sh
       - run: ./k8s-deploy-kubevirt.sh
