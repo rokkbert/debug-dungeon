@@ -28,5 +28,5 @@ jobs:
       - run: ./setup_everything.sh
       - name: Check pods
         run: kubectl get pod -n konveyor-forklift
-      - name: Call Forklift:
+      - name: Call Forklift
         run: kubectl get -n konveyor-forklift providers
