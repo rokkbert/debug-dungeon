@@ -21,13 +21,16 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
+      - run: ./install_kind.sh
       - run: echo "Get kubectl:"
       - uses: actions-hub/kubectl@master
         env:
-          KUBE_HOST: localhost
+          KUBE_CONFIG: ${HOME}/.kube/config
         with:
             args: get pods
-      - run: ./setup_everything.sh
+      - run: ./k8s-deploy-forklift.sh
+      - run: ./k8s-deploy-kubevirt.sh
+      - run: ./grant_permissions.sh
       - name: Check pods
         run: kubectl get pod -n konveyor-forklift
       - name: Call Forklift
