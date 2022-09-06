@@ -27,12 +27,9 @@ jobs:
           KUBE_CONFIG: kube-config
       - run: cat kube-config
       - run: echo "Get kubectl:"
-      - uses: actions-hub/kubectl@master
-        env:
-          KUBECONFIG: kube-config
-          KUBE_CONFIG: kube-config
-        with:
-          args: get pods
+      - uses: azure/setup-kubectl@v3
+        id: install
+      - run: kubectl version
       - run: ./k8s-deploy-forklift.sh
       - run: ./k8s-deploy-kubevirt.sh
       - run: ./grant_permissions.sh
