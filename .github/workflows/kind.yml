@@ -23,6 +23,8 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - run: echo "Get kubectl:"
       - uses: actions-hub/kubectl@master
+        env:
+          KUBE_HOST: localhost
         with:
             args: get pods
       - run: ./setup_everything.sh
