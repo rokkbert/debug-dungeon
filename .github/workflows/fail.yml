@@ -1,0 +1,26 @@
+name: Fail-Test
+on:
+  workflow_dispatch:
+      name:
+        description: 'Test how to terminate the worklow'
+        
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo `pwd` >> $GITHUB_PATH
+      - run: echo $PATH
+      - run: go install sigs.k8s.io/kind@v0.15.0
+      - run: kind create cluster
+      - run: echo "Get kubectl:"
+      - run: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - run: chmod u+x kubectl
+      - run: kubectl version
+      - run: kubectl get pods -A
+      - run: echo "RUNNING_FORKLIFT_PODS=$(kubectl get pods -A | grep forklift | grep Running | wc | tr -s ' ' | cut -f 2 -d ' ')" >> $GITHUB_ENV
+      - name: verify_four_pods
+        if: ${{ env.RUNNING_FORKLIFT_PODS }} != "4"
+        uses: actions/github-script@v3
+        with:
+          script: |
+            core.setFailed('Wrong number of running forklift pods.')
